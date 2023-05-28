@@ -121,5 +121,7 @@
 <style>
 .custom-label .v-label {
   color: #333333; /* 원하는 진한 색상으로 변경 */
+  /* transform: ""; */
+  width: "";
 }
 </style>
