@@ -52,7 +52,7 @@
                         x-large
                         class="text-capitalize white--text mt-7"
                         rounded
-                        @click="postAddedViewCount"
+                        @click="submit"
                       >Submit</v-btn>
                     <v-btn
                       color="secondary accent-2"
@@ -81,12 +81,13 @@
 
 <script>
   export default {
-    name: 'HelloWorld',
+    name: 'TravelVote',
 
     data: () => ({
       apiText: 'https://votingapp-9cffe-default-rtdb.firebaseio.com/',
       task: null,
       showAlert: false,
+      totalChkCount: 0,
       tasks: [
       {
         done: false,
@@ -120,7 +121,25 @@
    
     }),
     methods: {
-      postAddedViewCount() {
+      submit() {
+
+        let validate = true;
+        for (let i of this.tasks){
+          if(i.done == true) {
+            validate = false;
+          }
+        }
+        if (validate == true) {
+          this.showAlert = true;
+          return;
+        } 
+
+        for(let task of this.tasks){
+          if(task.done == true){
+            this.totalChkCount++;
+          }
+        }
+
         for(let task of this.tasks){
           if(task.done == true){
             this.getAxios(task.text);
@@ -145,26 +164,17 @@
         this.$axios.put(this.apiText + taskText + '.json', addedCount)
         .then(response => {
           console.log(response.data);
+          this.totalChkCount--;
+          if(this.totalChkCount == 0){
+            this.$router.push('/result');
+          }
         })
         .catch(error => {
           console.error(error);
         });
       },
       goResult(){
-        this.$router.push('/pages/alerts');
-      },
-      submit() {
-        let validate = true;
-        for (let i of this.tasks){
-          if(i.done == true) {
-            validate = false;
-          }
-        }
-        if (validate == true) {
-          this.showAlert = true;
-        } else {
-          this.$router.push('/pages/alerts');
-        }
+        this.$router.push('/result');
       }
   }
   }

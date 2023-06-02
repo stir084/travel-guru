@@ -4,6 +4,10 @@ import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import store from './store'
 import router from './router'
+import VueApexCharts from 'vue-apexcharts'
+Vue.use(VueApexCharts)
+
+Vue.component('apexchart', VueApexCharts)
 
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
