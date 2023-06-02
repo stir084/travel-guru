@@ -52,7 +52,7 @@
                         x-large
                         class="text-capitalize white--text mt-7"
                         rounded
-                        @click="submit"
+                        @click="postAddedViewCount"
                       >Submit</v-btn>
                     <v-btn
                       color="secondary accent-2"
@@ -84,6 +84,9 @@
     name: 'HelloWorld',
 
     data: () => ({
+      apiText: 'https://votingapp-9cffe-default-rtdb.firebaseio.com/',
+      task: null,
+      showAlert: false,
       tasks: [
       {
         done: false,
@@ -114,14 +117,64 @@
         text: "Philippines"
       }
     ],
-    task: null,
+   
     }),
+    methods: {
+      postAddedViewCount() {
+        for(let task of this.tasks){
+          if(task.done == true){
+            this.getAxios(task.text);
+          
+          }
+        }
+      },
+      getAxios(taskText) {
+        this.$axios.get(this.apiText + taskText + '.json')
+        .then(response => {
+          if(response.data != null){
+            this.putAxios(taskText, response.data + 1);
+          }
+          
+          return response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      },
+      putAxios(taskText, addedCount) {
+        this.$axios.put(this.apiText + taskText + '.json', addedCount)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+      },
+      goResult(){
+        this.$router.push('/pages/alerts');
+      },
+      submit() {
+        let validate = true;
+        for (let i of this.tasks){
+          if(i.done == true) {
+            validate = false;
+          }
+        }
+        if (validate == true) {
+          this.showAlert = true;
+        } else {
+          this.$router.push('/pages/alerts');
+        }
+      }
+  }
   }
 </script>
 <style>
 .custom-label .v-label {
-  color: #333333; /* 원하는 진한 색상으로 변경 */
-  /* transform: ""; */
+  color: #333333;
   width: "";
+}
+.v-text-field > .v-input__control > .v-input__slot:before {
+    display:none;
 }
 </style>
